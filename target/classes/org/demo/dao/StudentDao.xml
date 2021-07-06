@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="org.demo.dao.StudentDao">
+
+<!--    <select id="selectBlog" resultType="Blog">-->
+<!--    select * from Blog where id = #{id}-->
+<!--    </select>-->
+
+    <!--    查询一个学生-->
+    <select id="selectStudentById" parameterType="java.lang.Integer" resultType="org.demo.entity.Student">
+        select * from student where id = #{id}
+    </select>
+
+    <select id="selectByEmail" resultType="org.demo.entity.Student" parameterType="java.lang.String">
+        select * from student where email = #{StudentEmail}
+    </select>
+    
+    <select id="selectByNameAge" resultType="org.demo.entity.Student">
+        select * from student where name = #{myname} or age = #{myage}
+    </select>
+
+    <!--    这里使用对象传入 字段值要和entity中一致-->
+    <select id="selectByObject" resultType="org.demo.entity.Student">
+        select * from student where name = #{name} or age = #{age}
+    </select>
+    <!--    使用自定义对象传入 -->
+    <select id="selectByQueryParam" resultType="org.demo.entity.Student">
+        select * from student where name = #{p1} or age = #{p2}
+    </select>
+    <!--    按传入参数 位置传入-->
+    <select id="selectByPosition" resultType="org.demo.entity.Student">
+        select * from student where name = #{arg0} or age = #{arg1}
+    </select>
+    <!--    使用map传参-->
+    <!--    使用类型别名(mybatis.xml中定义alis)-->
+    <select id="selectByMap" resultType="stu">
+        select * from student where name = #{myname} or age = #{myage}
+    </select>
+
+    <!--    $占位符的使用: 表名 -->
+    <select id="queryStudents" resultType="Student">
+            select * from student where name=${name}
+    </select>
+    <!--    这里 只能用$，用#会出错-->
+    <select id="queryStudentOrderById" resultType="Student">
+        select * from student order by ${id}
+    </select>
+
+    <!--    查询返回map-->
+    <select id="queryMap" resultType="java.util.HashMap">
+        select * from student where id = #{id}
+    </select>
+
+    <!--    映射返回集到自定义类且字段不相等-->
+    <!--    sql中使用列别名可以达到相同的效果-->
+    <resultMap id="QueryParamMap" type="org.demo.entity.QueryParam">
+        <!--        主键列-->
+        <id column="id" property="p1"/>
+        <!--        非主键列 ,属性相同的不用映射,会自动映射-->
+        <result column="name" property="p2"/>
+        <result column="email" property="p3"/>
+        <result column="age" property="p4"/>
+    </resultMap>
+    <!--    返回值到属性名不相同(上面已做映射)的自定义类中-->
+    <select id="queryToQP" resultMap="QueryParamMap">
+        select * from student
+    </select>
+
+    <!--    模糊查询-->
+    <select id="selectLikeOne" resultType="stu">
+        select * from student where name like #{name}
+    </select>
+
+    <select id="selectLikeTwo" resultType="stu">
+        select * from student where name like "%" #{name} "%"
+    </select>
+
+    <!--    select foreach用法-->
+    <select id="selectForch" resultType="org.demo.entity.Student">
+        select * from student
+        <if test="list != null and list.size > 0">
+            where id in
+            <foreach collection="list" open="(" close=")" separator="," item="myid">
+                #{myid}
+            </foreach>
+        </if>
+    </select>
+    <!--    foreach对象的用法-->
+    <select id="selectForEach" resultType="org.demo.entity.Student">
+        select * from student
+        <if test="list != null and list.size > 0">
+            where id in
+            <foreach collection="list" open="(" close=")" separator="," item="mystu">
+                #{mystu.id}
+            </foreach>
+        </if>
+    </select>
+
+
+
+
+
+    <!--    添加一个学生-->
+    <insert id="insertStudent" >
+        insert into student values (#{id}, #{name}, #{email}, #{age})
+    </insert>
+
+    <select id="selectStudents" resultType="org.demo.entity.Student">
+        select * from student
+    </select>
+
+</mapper>
+
+<!--
+    1.约束文件 "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+    2.根标签 mapper
+        namespce：命名空间，不能为空
+                Dao接口的全限定名称
+                参与识别sql语句
+    3. mapper里可写<insert> <update> <delect> <select>
+     id :要执行的sql语句的唯一标识，推荐使用dao接口中的方法名称
+     resulttype: 告诉mybatis返回赋值给哪个java model/entity (使用全限定名称)
+
+-->
+

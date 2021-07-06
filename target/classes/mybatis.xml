@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--    使用外部的属性配置文件 -->
+    <properties resource="mybatis.properties"/>
+
+    <settings>
+        <!--        设置 日志    -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias type="org.demo.entity.Student" alias="Stu"/>
+        <typeAlias type="org.demo.entity.Student" alias="stu"/>
+
+        <package name="org.demo.entity"/>
+    </typeAliases>
+
+
+    <!--        声明分页插件-->
+    <plugins>
+        <plugin interceptor ="com.github.pagehelper.PageInterceptor" />
+    </plugins>
+
+
+    <!--    用default选择环境-->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+
+            <!--     配置数据源，创建Connection对象   -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/ssmdb?useSSL=false&amp;serverTimezone=GMT%2B8&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+
+
+
+
+        <environment id="online">
+            <transactionManager type="JDBC"/>
+
+            <!--     配置数据源，创建Connection对象   -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/ssmdb?useSSL=false&amp;serverTimezone=GMT%2B8&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+<!--    指定其他mapper文件的位置-->
+    <mappers>
+        
+
+        <!--        <mapper resource="org/demo/dao/StudentDao.xml"/>-->
+        <!--        使用package的要求：1，xml和接口名子形同 2,xml和接口在同一目录下 3.不能同时存在包索引和文件索引-->
+        <package name="org.demo.dao"/>
+    </mappers>
+
+</configuration>
